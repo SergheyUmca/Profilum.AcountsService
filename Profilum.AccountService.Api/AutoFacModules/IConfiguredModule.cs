@@ -1,9 +1,10 @@
 ﻿using Profilum.AccountService.Api.Models;
+using Profilum.AccountService.Common;
 
 namespace Profilum.AccountService.Api.AutoFacModules
 {
     public interface IConfiguredModule
     {
-        Settings Settings { get; set; }
+        AppSettings Settings { get; set; }
     }
 }

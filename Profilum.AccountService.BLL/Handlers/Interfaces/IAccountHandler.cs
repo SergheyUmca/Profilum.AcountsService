@@ -9,6 +9,8 @@ public interface IAccountHandler
 
     Task<Response<List<AccountResponse>>> GetAll();
 
+    IAsyncEnumerable<AccountResponse> GetAllStream();
+
     Task<Response<AccountResponse>> Create(AccountRequest request);
 
     Task<Response<AccountResponse>> Update(AccountRequest request);

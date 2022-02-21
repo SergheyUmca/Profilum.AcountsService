@@ -2,13 +2,14 @@
 using Autofac;
 using Autofac.Core;
 using Profilum.AccountService.Api.Models;
+using Profilum.AccountService.Common;
 
 namespace Profilum.AccountService.Api.AutoFacModules
 {
     public static class ConfiguredModuleRegistrationExtensions
     {
         public static void RegisterConfiguredModulesFromAssemblyContaining<TType>(this ContainerBuilder builder,
-            Settings settings)
+            AppSettings settings)
         {
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));

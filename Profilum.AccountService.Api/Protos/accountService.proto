@@ -7,7 +7,7 @@ package Profilum.AccountService;
 // The user service definition.
 service AccountService {
 
-  rpc GetAllAccounts (Empty) returns (stream AccountFullReply);
+  rpc GetAllAccounts (EmptyRequest) returns (stream AccountFullReply);
   
   rpc GetAccount (AccountGetRequest) returns (AccountFullReply);
 
@@ -15,12 +15,12 @@ service AccountService {
 
   rpc UpdateAccount (AccountCreateRequest) returns (AccountFullReply);
 
-  rpc DeleteAccount (AccountGetRequest) returns (AccountReply);
+  rpc DeleteAccount (AccountGetRequest) returns (EmptyReply);
 
-  rpc DeleteAllAccounts (Empty) returns (AccountReply);
+  rpc DeleteAllAccounts (EmptyRequest) returns (EmptyReply);
 }
 
-message Empty {
+message EmptyRequest {
 }
 
 message AccountGetRequest {
@@ -29,15 +29,17 @@ message AccountGetRequest {
 
 message AccountCreateRequest {
 	int64 id = 1;
-	string name = 2;
+	string userId = 2;
+  string AccountNumber = 3;
 }
 
-message AccountReply {
+message EmptyReply {
   int32 replyStateCode = 1;
 }
 
 message AccountFullReply {
   int32 replyStateCode = 1;
   int64 id = 2;
-  string name = 3;
+  string userId = 3;
+  string AccountNumber = 4;
 }

@@ -16,6 +16,32 @@ public class AccountHandler : IAccountHandler
         _connectionString = connectionString;
     }
     
+    public async Task<Response<AccountResponse>> Get(long id)
+    {
+        try
+        {
+            DAL.Models.AccountResponse dbAccount;
+            using (IDbService dbService = new DbService(_connectionString).DbServiceInstance)
+            {
+                var getAccount = await dbService.Accounts.Get(id);
+                if (!getAccount.IsSuccess)
+                    throw new CustomException(getAccount.ResultCode, getAccount.LastResultMessage);
+
+                dbAccount = getAccount.Data;
+            }
+            
+            return new Response<AccountResponse>(new AccountResponse(dbAccount));
+        }
+        catch (CustomException ce)
+        {
+            return new ErrorResponse<AccountResponse>(ce.LastErrorMessage, ce.LastResultCode);
+        }
+        catch (Exception e)
+        {
+            return new ErrorResponse<AccountResponse>(e.Message);
+        }
+    }
+    
     public async Task<Response<List<AccountResponse>>> GetAll()
     {
         try
@@ -47,33 +73,18 @@ public class AccountHandler : IAccountHandler
         }
     }
     
-    public async Task<Response<AccountResponse>> Get(long id)
+    public async IAsyncEnumerable<AccountResponse> GetAllStream()
     {
-        try
+        // ReSharper disable once ConvertToUsingDeclaration
+        using (IDbService dbService = new DbService(_connectionString).DbServiceInstance)
         {
-            DAL.Models.AccountResponse dbAccount;
-            using (IDbService dbService = new DbService(_connectionString).DbServiceInstance)
-            {
-                var getAccount = await dbService.Accounts.Get(id);
-                if (!getAccount.IsSuccess)
-                    throw new CustomException(getAccount.ResultCode, getAccount.LastResultMessage);
-
-                dbAccount = getAccount.Data;
-            }
-            
-            return new Response<AccountResponse>(new AccountResponse(dbAccount));
-        }
-        catch (CustomException ce)
-        {
-            return new ErrorResponse<AccountResponse>(ce.LastErrorMessage, ce.LastResultCode);
-        }
-        catch (Exception e)
-        {
-            return new ErrorResponse<AccountResponse>(e.Message);
+            var getAccount =  dbService.Accounts.GetAllAsyncEnumerable();
+            await foreach (var accountResponse in getAccount) 
+                yield return new AccountResponse(accountResponse);
         }
     }
-    
-    public async Task<Response<AccountResponse>> Create( AccountRequest request)
+
+    public async Task<Response<AccountResponse>> Create(AccountRequest request)
     {
         try
         {

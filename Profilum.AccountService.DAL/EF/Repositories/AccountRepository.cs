@@ -34,7 +34,7 @@ namespace Profilum.AccountService.DAL.EF.Repositories
                 return new Response<AccountResponse>(new AccountResponse
                 {
                     Id = accountEntities.Id,
-                    UserId = accountEntities.Id,
+                    UserId = accountEntities.UserId,
                     AccountNumber = accountEntities.AccountNumber
                 });
             }
@@ -62,7 +62,7 @@ namespace Profilum.AccountService.DAL.EF.Repositories
                     return new ErrorResponse<List<AccountResponse>>("Not found", ResponseCodes.NOT_FOUND_RECORDS);
                 
 
-                return new Response<List<AccountResponse>>( accountEntities.Select(a =>new AccountResponse
+                return new Response<List<AccountResponse>>( accountEntities.Select(a => new AccountResponse
                 {
                     Id = a.Id,
                     UserId = a.UserId,
@@ -74,6 +74,21 @@ namespace Profilum.AccountService.DAL.EF.Repositories
                 var exceptionMessage = e.InnerException != null ? e.InnerException.Message : e.Message;
                 return new ErrorResponse<List<AccountResponse>>(exceptionMessage, 
                     ResponseCodes.DATABASE_ERROR);
+            }
+        }
+        
+        public async IAsyncEnumerable<AccountResponse> GetAllAsyncEnumerable()
+        {
+            
+            var enumerator = _db.AccountEntities.GetAsyncEnumerator();
+            while (await enumerator.MoveNextAsync())
+            {
+                yield return  new AccountResponse
+                {
+                    Id = enumerator.Current.Id,
+                    UserId = enumerator.Current.UserId,
+                    AccountNumber = enumerator.Current.AccountNumber
+                };
             }
         }
         

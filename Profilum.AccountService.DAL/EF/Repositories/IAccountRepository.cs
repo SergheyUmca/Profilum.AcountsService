@@ -9,6 +9,8 @@ namespace Profilum.AccountService.DAL.EF.Repositories
 
         Task<Response<List<AccountResponse>>> GetAll();
 
+        IAsyncEnumerable<AccountResponse> GetAllAsyncEnumerable();
+
         Task<Response<long>> Create(AccountRequest request);
 
         Task<Response> Update(AccountRequest entity);
